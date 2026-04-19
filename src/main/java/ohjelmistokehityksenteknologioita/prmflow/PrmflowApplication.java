@@ -1,0 +1,13 @@
+package ohjelmistokehityksenteknologioita.prmflow;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class PrmflowApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(PrmflowApplication.class, args);
+	}
+
+}
