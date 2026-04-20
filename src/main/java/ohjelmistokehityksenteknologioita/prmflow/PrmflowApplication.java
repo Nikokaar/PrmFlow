@@ -28,12 +28,13 @@ public class PrmFlowApplication implements CommandLineRunner {
 
         HttpClient client = HttpClient.newHttpClient();
 
-        String url = "https://api.finavia.fi/flights/public/v0/flights?airport=HEL&type=arrival";
+        String url = "https://apigw.finavia.fi/flights/public/v0/flights?airport=HEL&type=arrival";
+
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
-                .header("Accept", "application/json")
-                .header("Ocp-Apim-Subscription-Key", apiKey)
+                .header("Accept", "application/xml")
+                .header("app_key", apiKey)
                 .GET()
                 .build();
 
