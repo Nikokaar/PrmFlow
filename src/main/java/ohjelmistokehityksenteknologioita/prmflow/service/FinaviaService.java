@@ -57,44 +57,60 @@ public class FinaviaService {
     // ---------------------------------------------------------
     // 2) Parsii XML:n → DTO-listaksi → Spring muuntaa JSON:iksi
     // ---------------------------------------------------------
- public List<FlightDto> fetchFlightsAsDto(String airport, String type) {
+    public List<FlightDto> fetchFlightsAsDto(String airport, String type) {
 
-    String xml = fetchFlights(airport, type);
+        String xml = fetchFlights(airport, type);
 
-    System.out.println("XML RESPONSE:");
-    System.out.println(xml);
+        System.out.println("XML RESPONSE:");
+        System.out.println(xml);
 
-    List<FlightDto> flights = new ArrayList<>();
+        List<FlightDto> flights = new ArrayList<>();
 
-    try {
-        Document doc = DocumentBuilderFactory.newInstance()
-                .newDocumentBuilder()
-                .parse(new InputSource(new StringReader(xml)));
+        try {
+            Document doc = DocumentBuilderFactory.newInstance()
+                    .newDocumentBuilder()
+                    .parse(new InputSource(new StringReader(xml)));
 
-        NodeList nodes = doc.getElementsByTagName("flight");
+            NodeList nodes = doc.getElementsByTagName("flight");
 
-        for (int i = 0; i < nodes.getLength(); i++) {
-            Element el = (Element) nodes.item(i);
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Element el = (Element) nodes.item(i);
 
-            String flightNumber = getTagValue(el, "fltnr");
-            String scheduledTime = getTagValue(el, "sdt");
-            String airline = getTagValue(el, "callsign"); // Finavia ei anna suoraan airlinea
-            String destination = getTagValue(el, "route_1");
+                String flightNumber = getTagValue(el, "fltnr");
+                String scheduledTime = getTagValue(el, "sdt");
+                String airline = getTagValue(el, "callsign");
 
-            flights.add(new FlightDto(
-                    flightNumber,
-                    scheduledTime,
-                    destination,
-                    airline,
-                    type
-            ));
+                // Destination code (fallback route_1 → route_2 → route_3 → route_4)
+                String destination = firstNonEmpty(
+                        getTagValue(el, "route_1"),
+                        getTagValue(el, "route_2"),
+                        getTagValue(el, "route_3"),
+                        getTagValue(el, "route_4")
+                );
+
+                // Destination name (fallback route_n_1 → route_n_2 → route_n_3 → route_n_4)
+                String destinationName = firstNonEmpty(
+                        getTagValue(el, "route_n_1"),
+                        getTagValue(el, "route_n_2"),
+                        getTagValue(el, "route_n_3"),
+                        getTagValue(el, "route_n_4")
+                );
+
+                flights.add(new FlightDto(
+                        flightNumber,
+                        scheduledTime,
+                        destination,
+                        destinationName,
+                        airline,
+                        type
+                ));
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("XML parsing error: " + e.getMessage(), e);
         }
 
-    } catch (Exception e) {
-        throw new RuntimeException("XML parsing error: " + e.getMessage(), e);
-    }
-
-    return flights;
+        return flights;
     }
 
     // ---------------------------------------------------------
@@ -104,5 +120,15 @@ public class FinaviaService {
         NodeList list = parent.getElementsByTagName(tagName);
         if (list.getLength() == 0) return "";
         return list.item(0).getTextContent();
+    }
+
+    // ---------------------------------------------------------
+    // Palauttaa ensimmäisen ei-tyhjän arvon
+    // ---------------------------------------------------------
+    private String firstNonEmpty(String... values) {
+        for (String v : values) {
+            if (v != null && !v.isBlank()) return v;
+        }
+        return "";
     }
 }
