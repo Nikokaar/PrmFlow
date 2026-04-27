@@ -34,6 +34,10 @@ export function Dashboard() {
     "DPNA"
   ];
 
+  // Lentojen tilat
+  const [arrivalFlights, setArrivalFlights] = useState([]);
+  const [departureFlights, setDepartureFlights] = useState([]);
+
   // Dialogien tilat
   const [openArrivalDialog, setOpenArrivalDialog] = useState(false);
   const [openDepartureDialog, setOpenDepartureDialog] = useState(false);
@@ -50,6 +54,22 @@ export function Dashboard() {
   const [arrivalAssists, setArrivalAssists] = useState([]);
   const [departureAssists, setDepartureAssists] = useState([]);
 
+  // Haetaan saapuvat ja lähtevät lennot backendistä, kun dialogit avataan
+  useEffect(() => {
+    if (openArrivalDialog) {
+      fetch("http://localhost:8080/api/flights?airport=HEL&type=arrival")
+        .then(res => res.json())
+        .then(data => setArrivalFlights(data));
+    }
+  }, [openArrivalDialog]);
+
+  useEffect(() => {
+    if (openDepartureDialog) {
+      fetch("http://localhost:8080/api/flights?airport=HEL&type=departure")
+        .then(res => res.json())
+        .then(data => setDepartureFlights(data));
+    }
+  }, [openDepartureDialog]);
   // Haetaan työntekijät backendistä
   useEffect(() => {
     fetch("http://localhost:8080/api/employees/on-duty")
@@ -130,7 +150,7 @@ export function Dashboard() {
               <List>
                 {arrivalAssists.map(item => (
                   <ListItem key={item.id}>
-                    {item.flightNumber} — {item.passengerName} ({item.ssr})
+                    {item.flightNumber} — {item.passengerName} ({item.ssr} - Gate {item.gate})
                   </ListItem>
                 ))}
               </List>
@@ -158,7 +178,7 @@ export function Dashboard() {
               <List>
                 {departureAssists.map(item => (
                   <ListItem key={item.id}>
-                    {item.flightNumber} — {item.passengerName} ({item.ssr})
+                    {item.flightNumber} — {item.passengerName} ({item.ssr} - Gate {item.gate})
                   </ListItem>
                 ))}
               </List>
@@ -171,12 +191,20 @@ export function Dashboard() {
       <Dialog open={openArrivalDialog} onClose={() => setOpenArrivalDialog(false)}>
         <DialogTitle>Lisää saapuva avustettava lento</DialogTitle>
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
-          <TextField
-            label="Lennon numero"
-            fullWidth
-            value={arrivalFlight}
-            onChange={e => setArrivalFlight(e.target.value)}
-          />
+          <FormControl fullWidth>
+            <InputLabel>Lennon numero</InputLabel>
+            <Select
+              value={arrivalFlight}
+              label="Lennon numero"
+              onChange={(e) => setArrivalFlight(e.target.value)}
+            >
+              {arrivalFlights.map(f => (
+                <MenuItem key={f.flightNumber} value={f.flightNumber}>
+                  {f.flightNumber} — {f.destinationName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <TextField
             label="Avustettavan nimi"
             fullWidth
@@ -207,12 +235,21 @@ export function Dashboard() {
       <Dialog open={openDepartureDialog} onClose={() => setOpenDepartureDialog(false)}>
         <DialogTitle>Lisää lähtevä avustettava lento</DialogTitle>
         <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
-          <TextField
-            label="Lennon numero"
-            fullWidth
-            value={departureFlight}
-            onChange={e => setDepartureFlight(e.target.value)}
-          />
+          <FormControl fullWidth>
+            <InputLabel>Lennon numero</InputLabel>
+            <Select
+              value={departureFlight}
+              label="Lennon numero"
+              onChange={(e) => setDepartureFlight(e.target.value)}
+            >
+              {departureFlights.map(f => (
+                <MenuItem key={f.flightNumber} value={f.flightNumber}>
+                  {f.flightNumber} — {f.destinationName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
           <TextField
             label="Avustettavan nimi"
             fullWidth

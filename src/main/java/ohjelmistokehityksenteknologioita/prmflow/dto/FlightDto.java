@@ -7,6 +7,7 @@ public class FlightDto {
     private String destinationName;
     private String airline;
     private String type;
+    private String gate;
 
     public FlightDto(
             String flightNumber,
@@ -14,7 +15,8 @@ public class FlightDto {
             String destination,
             String destinationName,
             String airline,
-            String type
+            String type,
+            String gate
     ) {
         this.flightNumber = flightNumber;
         this.scheduledTime = scheduledTime;
@@ -22,6 +24,7 @@ public class FlightDto {
         this.destinationName = destinationName;
         this.airline = airline;
         this.type = type;
+        this.gate = gate;
     }
 
     public String getFlightNumber() { return flightNumber; }
@@ -30,4 +33,5 @@ public class FlightDto {
     public String getDestinationName() { return destinationName; }
     public String getAirline() { return airline; }
     public String getType() { return type; }
+    public String getGate() { return gate; }
 }

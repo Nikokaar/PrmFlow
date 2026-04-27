@@ -12,7 +12,8 @@ public class EmployeeService {
     public List<Employee> getOnDutyEmployees() {
         return List.of(
             new Employee("1", "Anna Avustaja", "PRM Assistant"),
-            new Employee("2", "Gary Gatehelper", "PRM Assistant")
+            new Employee("2", "Gary Gatehelper", "Ambulift Driver"),
+            new Employee("3", "Sami Chekkari", "Check-in area attendant")
         );
     }
 }

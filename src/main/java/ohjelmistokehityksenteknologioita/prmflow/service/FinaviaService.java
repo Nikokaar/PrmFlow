@@ -96,13 +96,15 @@ public class FinaviaService {
                         getTagValue(el, "route_n_4")
                 );
 
+                String gate = getTagValue(el, "gate");
                 flights.add(new FlightDto(
                         flightNumber,
                         scheduledTime,
                         destination,
                         destinationName,
                         airline,
-                        type
+                        type,
+                        gate
                 ));
             }
 
