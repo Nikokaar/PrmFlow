@@ -2,7 +2,7 @@ import { useState } from "react";
 import { AppBar, Tabs, Tab, Box, Toolbar, Typography } from "@mui/material";
 import { Arrivals } from "./components/Arrivals";
 import { Departures } from "./components/Departures";
-import { Dashboard } from "./components/DashBoard";
+import { Dashboard } from "./components/Dashboard";
 
 function App() {
   const [tab, setTab] = useState(0);
@@ -11,19 +11,26 @@ function App() {
     <>
       <AppBar position="static">
         <Toolbar>
-          <Typography variant="h6">Flight Info</Typography>
+          <Typography variant="h6">PrmFlow</Typography>
         </Toolbar>
-        <Tabs value={tab} onChange={(_, v) => setTab(v)} centered>
-          <Tab label="Saapuvat" />
-          <Tab label="Lähtevät" />
+
+        <Tabs
+          value={tab}
+          onChange={(_, newValue) => setTab(newValue)}
+          variant="fullWidth"
+          textColor="inherit"
+          indicatorColor="secondary"
+          >
           <Tab label="Dashboard" />
+          <Tab label="Arrivals" />
+          <Tab label="Departures" />
         </Tabs>
       </AppBar>
 
       <Box sx={{ p: 3 }}>
-        {tab === 0 && <Arrivals />}
-        {tab === 1 && <Departures />}
-        {tab === 2 && <Dashboard />}
+        {tab === 0 && <Dashboard />}
+        {tab === 1 && <Arrivals />}
+        {tab === 2 && <Departures />}
       </Box>
     </>
   );

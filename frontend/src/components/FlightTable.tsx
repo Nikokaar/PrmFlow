@@ -11,8 +11,8 @@ export interface FlightDto {
 
 export function FlightTable({ flights }: { flights: FlightDto[] }) {
   return (
-    <TableContainer component={Paper}>
-      <Table>
+    <TableContainer component={Paper} sx={{ width: "100%" }}>
+      <Table sx={{ width: "100%" }}>
         <TableHead>
           <TableRow>
             <TableCell>Flight</TableCell>
