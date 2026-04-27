@@ -12,7 +12,11 @@ import {
   DialogContent,
   DialogActions,
   Button,
-  TextField
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl
 } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
@@ -20,9 +24,21 @@ import AddIcon from "@mui/icons-material/Add";
 export function Dashboard() {
   const [employees, setEmployees] = useState([]);
 
+  // Avustettavien ssr-koodit, joita käytetään lentojen erityisavustustarpeiden merkitsemiseen
+  const ssrCodes = [
+    "WCHR",
+    "WCHS",
+    "WCHC",
+    "BLND",
+    "DEAF",
+    "DPNA"
+  ];
+
   // Dialogien tilat
   const [openArrivalDialog, setOpenArrivalDialog] = useState(false);
   const [openDepartureDialog, setOpenDepartureDialog] = useState(false);
+  const [arrivalSSR, setArrivalSSR] = useState("");
+  const [departureSSR, setDepartureSSR] = useState("");
 
   // Lomakekenttien tilat
   const [arrivalFlight, setArrivalFlight] = useState("");
@@ -46,7 +62,8 @@ export function Dashboard() {
     const newItem = {
       id: crypto.randomUUID(),
       flightNumber: arrivalFlight,
-      passengerName: arrivalName
+      passengerName: arrivalName,
+      ssr: arrivalSSR
     };
 
     setArrivalAssists(prev => [...prev, newItem]);
@@ -61,7 +78,8 @@ export function Dashboard() {
     const newItem = {
       id: crypto.randomUUID(),
       flightNumber: departureFlight,
-      passengerName: departureName
+      passengerName: departureName,
+      ssr: departureSSR
     };
 
     setDepartureAssists(prev => [...prev, newItem]);
@@ -112,7 +130,7 @@ export function Dashboard() {
               <List>
                 {arrivalAssists.map(item => (
                   <ListItem key={item.id}>
-                    {item.flightNumber} — {item.passengerName}
+                    {item.flightNumber} — {item.passengerName} ({item.ssr})
                   </ListItem>
                 ))}
               </List>
@@ -140,7 +158,7 @@ export function Dashboard() {
               <List>
                 {departureAssists.map(item => (
                   <ListItem key={item.id}>
-                    {item.flightNumber} — {item.passengerName}
+                    {item.flightNumber} — {item.passengerName} ({item.ssr})
                   </ListItem>
                 ))}
               </List>
@@ -165,6 +183,19 @@ export function Dashboard() {
             value={arrivalName}
             onChange={e => setArrivalName(e.target.value)}
           />
+          <FormControl fullWidth>
+            <InputLabel>SSR-koodi</InputLabel>
+            <Select
+              value={arrivalSSR}
+              label="SSR-koodi"
+              onChange={(e) => setArrivalSSR(e.target.value)}
+            >
+              {ssrCodes.map(code => (
+                <MenuItem key={code} value={code}>{code}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenArrivalDialog(false)}>Peruuta</Button>
@@ -188,6 +219,19 @@ export function Dashboard() {
             value={departureName}
             onChange={e => setDepartureName(e.target.value)}
           />
+          <FormControl fullWidth>
+            <InputLabel>SSR-koodi</InputLabel>
+            <Select
+              value={departureSSR}
+              label="SSR-koodi"
+              onChange={(e) => setDepartureSSR(e.target.value)}
+            >
+              {ssrCodes.map(code => (
+                <MenuItem key={code} value={code}>{code}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDepartureDialog(false)}>Peruuta</Button>
